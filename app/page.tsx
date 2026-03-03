@@ -21,7 +21,7 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
-      <Navbar userName={session?.user?.name} />
+      <Navbar userName={session?.user?.name} onLogoClick={() => setActiveTab('log')} />
 
       <main className="max-w-2xl mx-auto">
         {/* Log Tab */}
@@ -36,7 +36,7 @@ export default function HomePage() {
 
         {/* Exercises Tab */}
         <div className={activeTab === 'exercises' ? 'block' : 'hidden'}>
-          <ExerciseList />
+          <ExerciseList refreshKey={historyRefreshKey} />
         </div>
       </main>
 

@@ -27,6 +27,7 @@ export interface ActiveSet {
   weightLbs?: number;
   durationSeconds?: number;
   distanceMiles?: number;
+  completed?: boolean;
 }
 
 export interface ActiveExercise {
@@ -68,6 +69,7 @@ export interface WorkoutDB {
   endTime: string;
   totalWeight: number;
   prsCount: number;
+  estimatedCalories: number | null;
   notes: string | null;
   exercises: WorkoutExerciseDB[];
   createdAt: string;

@@ -118,6 +118,18 @@ export async function POST(req: Request) {
       }
     );
 
+    // Estimate calories: MET × 70 kg × duration in hours
+    const durationHours =
+      (new Date(endTime).getTime() - new Date(startTime).getTime()) / 3_600_000;
+    const cardioCount = exercises.filter(
+      (e: { exerciseId: string }) => EXERCISE_MAP.get(e.exerciseId)?.type === 'cardio'
+    ).length;
+    const avgMET =
+      exercises.length > 0
+        ? (cardioCount * 7.0 + (exercises.length - cardioCount) * 3.5) / exercises.length
+        : 3.5;
+    const estimatedCalories = Math.round(avgMET * 70 * durationHours);
+
     const workout = await prisma.workout.create({
       data: {
         userId: session.user.id,
@@ -125,6 +137,7 @@ export async function POST(req: Request) {
         endTime: new Date(endTime),
         totalWeight,
         prsCount,
+        estimatedCalories,
         notes: notes ?? null,
         exercises: { create: exercisesWithPRs },
       },

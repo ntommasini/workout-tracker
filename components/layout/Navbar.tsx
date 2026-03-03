@@ -7,23 +7,27 @@ import { useState } from 'react';
 
 interface NavbarProps {
   userName?: string | null;
+  onLogoClick?: () => void;
 }
 
-export function Navbar({ userName }: NavbarProps) {
+export function Navbar({ userName, onLogoClick }: NavbarProps) {
   const [showMenu, setShowMenu] = useState(false);
 
   return (
     <header className="sticky top-0 z-40 w-full bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800">
       <div className="max-w-2xl mx-auto px-4 h-14 flex items-center justify-between">
         {/* Logo */}
-        <div className="flex items-center gap-2">
+        <button
+          onClick={onLogoClick}
+          className="flex items-center gap-2 rounded-xl hover:opacity-80 transition-opacity"
+        >
           <div className="w-8 h-8 bg-violet-600 rounded-xl flex items-center justify-center">
             <Dumbbell size={16} className="text-white" />
           </div>
           <span className="font-bold text-zinc-900 dark:text-white tracking-tight">
             GainLog
           </span>
-        </div>
+        </button>
 
         {/* Right actions */}
         <div className="flex items-center gap-1">

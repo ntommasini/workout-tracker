@@ -22,9 +22,10 @@ model Workout {
   user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   startTime   DateTime
   endTime     DateTime
-  totalWeight Float             @default(0)
-  prsCount    Int               @default(0)
-  notes       String?
+  totalWeight       Float             @default(0)
+  prsCount          Int               @default(0)
+  estimatedCalories Int?
+  notes             String?
   exercises   WorkoutExercise[]
   createdAt   DateTime          @default(now())
 

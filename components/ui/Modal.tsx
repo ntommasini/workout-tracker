@@ -8,12 +8,13 @@ interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   title?: string;
+  action?: React.ReactNode;
   children: React.ReactNode;
   size?: 'sm' | 'md' | 'lg' | 'xl' | 'full';
   className?: string;
 }
 
-export function Modal({ isOpen, onClose, title, children, size = 'md', className }: ModalProps) {
+export function Modal({ isOpen, onClose, title, action, children, size = 'md', className }: ModalProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -68,12 +69,15 @@ export function Modal({ isOpen, onClose, title, children, size = 'md', className
         {title && (
           <div className="flex items-center justify-between px-5 pt-5 pb-4 border-b border-zinc-100 dark:border-zinc-800">
             <h2 className="text-lg font-semibold text-zinc-900 dark:text-white">{title}</h2>
-            <button
-              onClick={onClose}
-              className="p-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 dark:text-zinc-400 transition-colors"
-            >
-              <X size={18} />
-            </button>
+            <div className="flex items-center gap-1">
+              {action}
+              <button
+                onClick={onClose}
+                className="p-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 dark:text-zinc-400 transition-colors"
+              >
+                <X size={18} />
+              </button>
+            </div>
           </div>
         )}
         {!title && (

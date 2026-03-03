@@ -61,12 +61,6 @@ export function ExerciseDetailModal({ exerciseId, onClose }: ExerciseDetailModal
       <div className="flex flex-col">
         {/* Header */}
         <div className="px-5 pt-5 pb-4">
-          <button
-            onClick={onClose}
-            className="absolute top-4 right-4 p-1.5 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 transition-colors"
-          >
-            ×
-          </button>
           <Badge variant="category" category={def.category} className="mb-2">
             {def.category.charAt(0).toUpperCase() + def.category.slice(1)}
           </Badge>

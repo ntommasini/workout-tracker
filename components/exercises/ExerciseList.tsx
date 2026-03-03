@@ -9,7 +9,7 @@ import { cn } from '@/lib/utils';
 import type { ExerciseStat, ExerciseCategory } from '@/lib/types';
 import { Search, ChevronRight, ListCollapse } from 'lucide-react';
 
-export function ExerciseList() {
+export function ExerciseList({ refreshKey = 0 }: { refreshKey?: number }) {
   const [stats, setStats] = useState<ExerciseStat[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -17,6 +17,7 @@ export function ExerciseList() {
   const [activeCategory, setActiveCategory] = useState<ExerciseCategory | 'all'>('all');
 
   useEffect(() => {
+    setLoading(true);
     fetch('/api/exercises/stats')
       .then((r) => r.json())
       .then((data) => {
@@ -24,7 +25,7 @@ export function ExerciseList() {
         setLoading(false);
       })
       .catch(() => setLoading(false));
-  }, []);
+  }, [refreshKey]);
 
   const statMap = useMemo(
     () => new Map(stats.map((s) => [s.exerciseId, s])),

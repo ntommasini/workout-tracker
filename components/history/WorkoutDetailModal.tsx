@@ -3,34 +3,65 @@
 import { useEffect, useState } from 'react';
 import { Modal } from '@/components/ui/Modal';
 import { Badge } from '@/components/ui/Badge';
+import { Button } from '@/components/ui/Button';
+import { EditWorkoutModal } from './EditWorkoutModal';
 import { EXERCISE_MAP } from '@/lib/exercises';
 import { formatDateTime, formatWorkoutDuration, formatWeight } from '@/lib/utils';
 import type { WorkoutDB } from '@/lib/types';
-import { Clock, Dumbbell, Trophy, Calendar, Star } from 'lucide-react';
+import { Clock, Dumbbell, Trophy, Flame, Calendar, Star, Pencil } from 'lucide-react';
 
 interface WorkoutDetailModalProps {
   workoutId: string | null;
   onClose: () => void;
+  onWorkoutUpdated?: () => void;
 }
 
-export function WorkoutDetailModal({ workoutId, onClose }: WorkoutDetailModalProps) {
+export function WorkoutDetailModal({ workoutId, onClose, onWorkoutUpdated }: WorkoutDetailModalProps) {
   const [workout, setWorkout] = useState<WorkoutDB | null>(null);
   const [loading, setLoading] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
 
-  useEffect(() => {
-    if (!workoutId) return;
+  const fetchWorkout = (id: string) => {
     setLoading(true);
-    fetch(`/api/workouts/${workoutId}`)
+    fetch(`/api/workouts/${id}`)
       .then((r) => r.json())
       .then((data) => {
         setWorkout(data);
         setLoading(false);
       })
       .catch(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    if (!workoutId) return;
+    fetchWorkout(workoutId);
   }, [workoutId]);
 
+  const handleEditSaved = () => {
+    if (workoutId) fetchWorkout(workoutId);
+    onWorkoutUpdated?.();
+  };
+
   return (
-    <Modal isOpen={!!workoutId} onClose={onClose} title="Workout Details" size="lg">
+    <>
+    <Modal
+      isOpen={!!workoutId}
+      onClose={onClose}
+      title="Workout Details"
+      size="lg"
+      action={
+        workout ? (
+          <Button
+            variant="ghost"
+            onClick={() => setShowEdit(true)}
+            className="flex items-center gap-1.5 text-sm"
+          >
+            <Pencil size={14} />
+            Edit
+          </Button>
+        ) : undefined
+      }
+    >
       <div className="px-5 pb-5">
         {loading && (
           <div className="flex items-center justify-center py-12">
@@ -47,7 +78,7 @@ export function WorkoutDetailModal({ workoutId, onClose }: WorkoutDetailModalPro
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 gap-3">
               <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-3 text-center">
                 <Clock size={18} className="text-blue-500 mx-auto mb-1" />
                 <div className="font-bold text-sm text-zinc-900 dark:text-white">
@@ -68,6 +99,13 @@ export function WorkoutDetailModal({ workoutId, onClose }: WorkoutDetailModalPro
                   {workout.prsCount}
                 </div>
                 <div className="text-xs text-zinc-400 dark:text-zinc-500">PRs</div>
+              </div>
+              <div className="bg-red-50 dark:bg-red-900/20 rounded-xl p-3 text-center">
+                <Flame size={18} className="text-red-500 mx-auto mb-1" />
+                <div className="font-bold text-sm text-zinc-900 dark:text-white">
+                  {workout.estimatedCalories != null ? `~${workout.estimatedCalories}` : '—'}
+                </div>
+                <div className="text-xs text-zinc-400 dark:text-zinc-500">kcal</div>
               </div>
             </div>
 
@@ -149,5 +187,12 @@ export function WorkoutDetailModal({ workoutId, onClose }: WorkoutDetailModalPro
         )}
       </div>
     </Modal>
+
+    <EditWorkoutModal
+      workout={showEdit ? workout : null}
+      onClose={() => setShowEdit(false)}
+      onSaved={handleEditSaved}
+    />
+    </>
   );
 }

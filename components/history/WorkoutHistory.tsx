@@ -10,7 +10,7 @@ import {
   formatWeight,
 } from '@/lib/utils';
 import type { WorkoutDB } from '@/lib/types';
-import { Clock, Dumbbell, Trophy, ChevronRight, History, Star } from 'lucide-react';
+import { Clock, Dumbbell, Trophy, Flame, ChevronRight, History, Star } from 'lucide-react';
 
 interface WorkoutHistoryProps {
   refreshKey?: number;
@@ -20,6 +20,7 @@ export function WorkoutHistory({ refreshKey = 0 }: WorkoutHistoryProps) {
   const [workouts, setWorkouts] = useState<WorkoutDB[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [internalKey, setInternalKey] = useState(0);
 
   useEffect(() => {
     setLoading(true);
@@ -30,7 +31,7 @@ export function WorkoutHistory({ refreshKey = 0 }: WorkoutHistoryProps) {
         setLoading(false);
       })
       .catch(() => setLoading(false));
-  }, [refreshKey]);
+  }, [refreshKey, internalKey]);
 
   if (loading) {
     return (
@@ -108,6 +109,12 @@ export function WorkoutHistory({ refreshKey = 0 }: WorkoutHistoryProps) {
                     {workout.prsCount} PR{workout.prsCount !== 1 ? 's' : ''}
                   </span>
                 )}
+                {workout.estimatedCalories != null && workout.estimatedCalories > 0 && (
+                  <span className="flex items-center gap-1.5 text-xs font-medium text-zinc-500 dark:text-zinc-400">
+                    <Flame size={13} className="text-red-400" />
+                    ~{workout.estimatedCalories} kcal
+                  </span>
+                )}
               </div>
 
               {/* Exercise chips */}
@@ -134,6 +141,7 @@ export function WorkoutHistory({ refreshKey = 0 }: WorkoutHistoryProps) {
       <WorkoutDetailModal
         workoutId={selectedId}
         onClose={() => setSelectedId(null)}
+        onWorkoutUpdated={() => setInternalKey((k) => k + 1)}
       />
     </>
   );
